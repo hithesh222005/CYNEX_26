@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYNEX 2K26 | National Cybersecurity Symposium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f1419;
+            --secondary: #1a1f2e;
+            --accent: #00d4ff;
+            --accent-dark: #0099cc;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --wolf-gray: #2a3f5f;
+            --wolf-orange: #ff6b35;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .intro-storm {
+            position: fixed;
+            inset: 0;
+            z-index: 1500;
+            display: none;
+            overflow: hidden;
+            pointer-events: none;
+            background: rgba(3, 8, 16, 0.18);
+        }
+
+        .intro-storm.active {
+            display: block;
+            animation: stormFade 3s ease-out forwards;
+        }
+
+        .intro-storm::before {
+            content: '';
+            position: absolute;
+            inset: -180px -10%;
+            opacity: 0.72;
+            background-image:
+                repeating-linear-gradient(108deg, transparent 0 35px, rgba(203, 240, 255, 0.78) 36px 38px, transparent 39px 78px),
+                repeating-linear-gradient(108deg, transparent 0 72px, rgba(128, 207, 255, 0.52) 73px 75px, transparent 76px 126px),
+                repeating-linear-gradient(108deg, transparent 0 118px, rgba(226, 249, 255, 0.36) 119px 121px, transparent 122px 185px);
+            background-size: 130px 170px, 190px 230px, 270px 310px;
+            animation: rainFall 1.15s linear infinite;
+        }
+
+        .intro-storm::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 18%, rgba(89, 180, 255, 0.38), transparent 34%);
+            opacity: 0;
+            animation: lightningFlash 2s ease-in-out infinite;
+        }
+
+        .storm-lightning {
+            position: absolute;
+            top: 4%;
+            left: 50%;
+            width: 230px;
+            height: 390px;
+            z-index: 1;
+            opacity: 0;
+            transform: translateX(-50%) scale(0.82);
+            transform-origin: top center;
+            animation: lightningBolt 2s ease-in-out infinite;
+        }
+
+        .storm-lightning path {
+            fill: none;
+            stroke: #bfeeff;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 12px #58baff) drop-shadow(0 0 26px #087cff);
+        }
+
+        .storm-lightning .bolt-main {
+            stroke: #eafaff;
+            stroke-width: 8;
+        }
+
+        .storm-lightning .bolt-branch {
+            stroke: #73caff;
+            stroke-width: 4;
+        }
+
+        .storm-lightning.side-left,
+        .storm-lightning.side-right {
+            top: 15%;
+            width: 145px;
+            height: 245px;
+            animation-duration: 2.4s;
+        }
+
+        .storm-lightning.side-left {
+            left: 20%;
+            animation-delay: -0.8s;
+        }
+
+        .storm-lightning.side-right {
+            left: 80%;
+            animation-delay: -1.35s;
+        }
+
+        @keyframes rainFall {
+            from { transform: translateY(-170px); }
+            to { transform: translateY(170px); }
+        }
+
+        @keyframes lightningFlash {
+            0%, 34%, 48%, 100% { opacity: 0; }
+            35%, 39% { opacity: 0.2; }
+            40%, 43% { opacity: 0.04; }
+            44%, 47% { opacity: 0.14; }
+        }
+
+        @keyframes lightningBolt {
+            0%, 33%, 100% { opacity: 0; transform: translateX(-50%) scale(0.82); }
+            35%, 39% { opacity: 0.95; transform: translateX(-50%) scale(1); }
+            40%, 43% { opacity: 0.08; transform: translateX(-50%) scale(0.96); }
+            44%, 47% { opacity: 0.62; transform: translateX(-50%) scale(0.98); }
+            49% { opacity: 0; transform: translateX(-50%) scale(0.94); }
+        }
+
+        @keyframes stormFade {
+            0%, 67% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(96vw, 1460px);
+            background: rgba(9, 17, 27, 0.9);
+            backdrop-filter: blur(14px);
+            padding: 1.2rem 1.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border: 2px solid rgba(0, 212, 255, 0.55);
+            border-radius: 26px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 24px rgba(0, 212, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 2.15rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            letter-spacing: -1px;
+        }
+
+        .wolf-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a, .nav-links button {
+            color: rgba(224, 224, 224, 0.9);
+            text-decoration: none;
+            font-weight: 550;
+            transition: all 0.3s ease;
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links a:hover, .nav-links button:hover {
+            color: var(--accent);
+            text-shadow: 0 0 18px rgba(0, 212, 255, 0.45);
+        }
+
+        .nav-contact {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        .contact-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--accent), var(--wolf-orange));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.35);
+        }
+
+        .contact-icon:hover {
+            transform: translateY(-2px) scale(1.06);
+            box-shadow: 0 10px 28px rgba(0, 212, 255, 0.6);
+        }
+
+        .contact-icon i {
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+        }
+
+        .register-btn {
+            background: linear-gradient(135deg, var(--accent), var(--wolf-orange));
+            color: var(--primary);
+            padding: 0.9rem 1.7rem;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 24px rgba(0, 212, 255, 0.28);
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.35);
+        }
+
+        .game-launcher {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(255, 107, 53, 0.18));
+            color: #fff;
+            font-size: 1.6rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .game-launcher:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 12px 28px rgba(0, 212, 255, 0.3);
+        }
+
+        .game-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 8, 16, 0.82);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .game-modal.active {
+            display: flex;
+        }
+
+        .game-panel {
+            width: min(92vw, 540px);
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
+            background: linear-gradient(180deg, rgba(13, 23, 35, 0.96), rgba(9, 16, 25, 0.98));
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            border-radius: 22px;
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55), 0 0 30px rgba(0, 212, 255, 0.15);
+            padding: 1.25rem;
+            color: var(--text);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .game-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-game {
+            background: transparent;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            color: var(--accent);
+            border-radius: 12px;
+            padding: 0.45rem 0.9rem;
+            cursor: pointer;
+        }
+
+        .game-info {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .game-scoreboard {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .score-pill {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            border-radius: 999px;
+            padding: 0.55rem 0.9rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .game-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            max-height: min(58vh, 420px);
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: radial-gradient(circle at top, rgba(0, 212, 255, 0.12), transparent 40%), rgba(12, 19, 28, 0.8);
+        }
+
+        .snake-grid {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 2px;
+            padding: 10px;
+        }
+
+        .cell {
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .cell.snake {
+            background: linear-gradient(135deg, #00d4ff, #61f4ff);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .cell.food {
+            background: linear-gradient(135deg, #ffbf69, #ff6b35);
+            border-radius: 6px;
+            box-shadow: 0 0 12px rgba(255, 107, 53, 0.7);
+        }
+
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .game-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 48px);
+            grid-template-rows: repeat(2, 44px);
+            justify-content: center;
+            gap: 0.35rem;
+            margin-top: 1rem;
+        }
+
+        .game-pad button {
+            border: 1px solid rgba(0, 212, 255, 0.45);
+            border-radius: 10px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            font-size: 1.15rem;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .game-pad button:active {
+            background: rgba(0, 212, 255, 0.35);
+            transform: scale(0.94);
+        }
+
+        .game-pad button[data-direction="up"] { grid-column: 2; grid-row: 1; }
+        .game-pad button[data-direction="left"] { grid-column: 1; grid-row: 2; }
+        .game-pad button[data-direction="down"] { grid-column: 2; grid-row: 2; }
+        .game-pad button[data-direction="right"] { grid-column: 3; grid-row: 2; }
+
+        .primary-game-btn,
+        .secondary-game-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 0.9rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary-game-btn {
+            background: linear-gradient(135deg, var(--accent), var(--wolf-orange));
+            color: #06131c;
+        }
+
+        .secondary-game-btn {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--text);
+        }
+
+        .quiz-stage {
+            display: none;
+            padding: 1.25rem;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            background: rgba(12, 19, 28, 0.8);
+        }
+
+        .quiz-stage.active {
+            display: block;
+        }
+
+        .quiz-question {
+            color: #f2fbff;
+            font-size: 1.15rem;
+            line-height: 1.45;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .quiz-option {
+            width: 100%;
+            padding: 0.75rem 0.9rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(0, 212, 255, 0.06);
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .quiz-option:hover,
+        .quiz-option.correct {
+            border-color: #65f6b2;
+            background: rgba(101, 246, 178, 0.14);
+        }
+
+        .quiz-option.wrong {
+            border-color: #ff806e;
+            background: rgba(255, 128, 110, 0.14);
+        }
+
+        .quiz-option:disabled {
+            cursor: default;
+        }
+
+        .quiz-feedback {
+            min-height: 1.5rem;
+            margin-top: 0.9rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .memory-stage {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.65rem;
+            padding: 1rem;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            background: rgba(12, 19, 28, 0.8);
+        }
+
+        .memory-stage.active {
+            display: grid;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            border: 1px solid rgba(0, 212, 255, 0.35);
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(255, 107, 53, 0.12));
+            color: transparent;
+            font-size: 1.65rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .memory-card:active {
+            transform: scale(0.94);
+        }
+
+        .memory-card.revealed,
+        .memory-card.matched {
+            color: #fff;
+            background: rgba(0, 212, 255, 0.28);
+            box-shadow: 0 0 14px rgba(0, 212, 255, 0.22);
+        }
+
+        .memory-card.matched {
+            border-color: #65f6b2;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            nav {
+                padding: 1rem;
+            }
+
+            .game-panel {
+                width: min(94vw, 420px);
+                padding: 1rem;
+            }
+
+            .game-info {
+                margin-bottom: 0.7rem;
+            }
+
+            .game-scoreboard {
+                gap: 0.5rem;
+            }
+
+            .score-pill {
+                padding: 0.45rem 0.7rem;
+                font-size: 0.9rem;
+            }
+
+            .primary-game-btn,
+            .secondary-game-btn {
+                padding: 0.75rem 1.1rem;
+            }
+        }
+
+        /* Page Container */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 120px;
+            min-height: calc(100vh - 70px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 2rem 2rem;
+            background: linear-gradient(135deg, #0a0d12 0%, #1a1f2e 100%);
+        }
+
+        .hero::before {
+            content: '🐺';
+            position: absolute;
+            top: 12%;
+            right: -4%;
+            font-size: clamp(18rem, 38vw, 34rem);
+            line-height: 1;
+            opacity: 0.055;
+            filter: grayscale(1) brightness(0.35) blur(1px);
+            text-shadow: 0 0 55px rgba(0, 0, 0, 0.95), 0 0 100px rgba(0, 212, 255, 0.12);
+            mix-blend-mode: screen;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(40px); }
+        }
+
+        .mountain-bg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(to top, rgba(42, 63, 95, 0.4), transparent);
+            clip-path: polygon(0 100%, 15% 40%, 30% 50%, 45% 35%, 60% 45%, 75% 30%, 100% 50%, 100% 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            background: rgba(0, 212, 255, 0.12);
+            border: 2px solid rgba(0, 212, 255, 0.9);
+            color: #dffcff;
+            padding: 1.15rem 2.3rem;
+            border-radius: 999px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 auto 2rem auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 28px rgba(0, 212, 255, 0.28), inset 0 0 18px rgba(0, 212, 255, 0.12);
+            text-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+        }
+
+        .hero-badge .badge-icon {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 53, 0.7));
+        }
+
+        .hero h1 {
+            display: inline-block;
+            font-size: clamp(4.1rem, 9vw, 7.2rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(110deg, #00d4ff, #67e8f9, #d8c7a7, #ff6b35, #00d4ff);
+            background-size: 260% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            transform: scaleX(1.14);
+            transform-origin: center;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            animation: titleColorShift 7s linear infinite;
+        }
+
+        @keyframes titleColorShift {
+            0% { background-position: 0% center; }
+            100% { background-position: 260% center; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.6rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .hero-tagline {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 3rem;
+            font-weight: 600;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 212, 255, 0.5); }
+            50% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+        }
+
+        /* Countdown Timer */
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .timer-box {
+            background: rgba(26, 31, 46, 0.9);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timer-box:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+            transform: translateY(-8px);
+        }
+
+        .timer-number {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .timer-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1.1rem 2.8rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* Events Section */
+        .events {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--wolf-orange));
+            border-radius: 2px;
+        }
+
+        .event-category {
+            margin-bottom: 5rem;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            color: var(--accent);
+            margin: 4rem 0 2rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--wolf-orange));
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .event-card {
+            background: rgba(26, 31, 46, 0.7);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.15), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .event-card:hover::before {
+            left: 100%;
+        }
+
+        .event-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-15px);
+            box-shadow: 0 30px 60px rgba(0, 212, 255, 0.25);
+        }
+
+        .event-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+        }
+
+        .event-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .event-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .view-more {
+            display: inline-block;
+            color: var(--accent);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .view-more:hover {
+            color: var(--wolf-orange);
+            transform: translateX(5px);
+        }
+
+        /* Event Detail Page */
+        .event-detail {
+            padding: 6rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-top: 70px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            gap: 1rem;
+        }
+
+        .event-detail h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00d4ff 0%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .event-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-value {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .event-content {
+            margin: 3rem 0;
+            line-height: 1.9;
+        }
+
+        .event-content h2 {
+            font-size: 1.8rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .event-content p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .highlights-list {
+            background: rgba(26, 31, 46, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        .highlights-list li {
+            list-style: none;
+            padding: 0.8rem 0;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .highlights-list li::before {
+            content: '▸';
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Committee Section */
+        .committee {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .committee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .member-card {
+            background: rgba(26, 31, 46, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .member-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-faculty {
+            background: rgba(11, 25, 38, 0.9);
+            border: 2px solid rgba(0, 212, 255, 0.9);
+            border-radius: 24px;
+            box-shadow: inset 0 0 25px rgba(0, 212, 255, 0.08), 0 0 28px rgba(0, 212, 255, 0.18);
+        }
+
+        .faculty-badge-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .faculty-icon {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #081d2e;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 1) 0%, rgba(255, 146, 72, 1) 100%);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 35px rgba(255, 146, 72, 0.28);
+            border: 3px solid rgba(0, 212, 255, 0.8);
+        }
+
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent), var(--wolf-orange));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-role {
+            color: var(--accent);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .member-contact {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Info Section */
+        .info {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .info-box {
+            background: rgba(26, 31, 46, 0.7);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.15);
+        }
+
+        .info-box h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.7);
+            border-top: 1px solid rgba(0, 212, 255, 0.15);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin: 0.7rem 0;
+        }
+
+        .footer-highlight {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: clamp(2.7rem, 13vw, 4.5rem);
+                transform: scaleX(1.06);
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .countdown {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .events-grid, .committee-grid, .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .event-detail h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .category-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="intro-storm active" id="introStorm" aria-hidden="true">
+        <svg class="storm-lightning" viewBox="0 0 230 390" role="presentation">
+            <path class="bolt-main" d="M128 0 L108 54 L132 50 L92 122 L116 116 L76 204 L101 194 L68 292 L103 270 L87 390" />
+            <path class="bolt-branch" d="M109 56 L72 92 L91 94 L52 134" />
+            <path class="bolt-branch" d="M94 120 L142 151 L121 158 L166 196" />
+            <path class="bolt-branch" d="M78 202 L38 235 L59 239 L23 278" />
+        </svg>
+        <svg class="storm-lightning side-left" viewBox="0 0 230 390" role="presentation">
+            <path class="bolt-main" d="M128 0 L108 54 L132 50 L92 122 L116 116 L76 204 L101 194 L68 292 L103 270 L87 390" />
+            <path class="bolt-branch" d="M109 56 L72 92 L91 94 L52 134" />
+        </svg>
+        <svg class="storm-lightning side-right" viewBox="0 0 230 390" role="presentation">
+            <path class="bolt-main" d="M128 0 L108 54 L132 50 L92 122 L116 116 L76 204 L101 194 L68 292 L103 270 L87 390" />
+            <path class="bolt-branch" d="M94 120 L142 151 L121 158 L166 196" />
+        </svg>
+    </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo" onclick="goHome()">
+            <span class="wolf-icon">🐺</span>
+            <span>CYNEX</span>
+        </div>
+        <ul class="nav-links">
+            <li><button onclick="goHome()">Home</button></li>
+            <li><button onclick="showPage('events')">Events</button></li>
+            <li><button onclick="showPage('committee')">Committee</button></li>
+            <li><button onclick="showPage('info')">Details</button></li>
+        </ul>
+        <div class="nav-contact">
+            <button class="game-launcher" onclick="openGameModal()" title="Play mini game">🎮</button>
+            <a href="https://chat.whatsapp.com/FN4HYHGGIpSBc7hiMiHRM3?s=sh&p=a&mlu=4&ilr=4" target="_blank" class="contact-icon" title="Join WhatsApp Group">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="tel:+919363098532" class="contact-icon" title="Call us +91 93630 98532">
+                <i class="fas fa-phone-alt"></i>
+            </a>
+            <button class="register-btn" onclick="registerNow()">Register</button>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home-page" class="page active">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="mountain-bg"></div>
+
+            <div class="hero-content">
+                <div class="hero-badge"><span class="badge-icon">🔥</span> National Level Symposium</div>
+                
+                <h1>CYNEX 2K26</h1>
+                <p class="hero-subtitle">Hunt the Threat. Guard the Code.</p>
+                <p class="hero-tagline">⚡ Where Wolves Hunt Vulnerabilities ⚡</p>
+                <p style="color: var(--text-light); font-size: 1.05rem; margin-bottom: 2rem;">Department of Cyber Security (CSE) | BE Programme</p>
+
+                <!-- Countdown Timer -->
+                <div class="countdown">
+                    <div class="timer-box">
+                        <div class="timer-number" id="days">00</div>
+                        <div class="timer-label">Days</div>
+                    </div>
+                    <div class="timer-box">
+                        <div class="timer-number" id="hours">00</div>
+                        <div class="timer-label">Hours</div>
+                    </div>
+                    <div class="timer-box">
+                        <div class="timer-number" id="minutes">00</div>
+                        <div class="timer-label">Minutes</div>
+                    </div>
+                    <div class="timer-box">
+                        <div class="timer-number" id="seconds">00</div>
+                        <div class="timer-label">Seconds</div>
+                    </div>
+                </div>
+
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="registerNow()">Register Now</button>
+                    <button class="btn-secondary" onclick="showPage('events')">Explore Events</button>
+                </div>
+
+                <p style="margin-top: 2.5rem; color: var(--text-light); font-size: 0.95rem;">
+                    📅 26 September 2026 · Saturday | 📍 Gojan School of Business & Technology
+                </p>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section class="events" id="events">
+            <h2 class="section-title">Featured Events</h2>
+            
+            <!-- TECHNICAL EVENTS -->
+            <div class="event-category">
+                <div class="category-title">
+                    <span class="category-badge">🔧 Technical Events</span>
+                </div>
+                
+                <div class="events-grid">
+                    <!-- Event 1 -->
+                    <div class="event-card" onclick="showEventDetail('cyber-crime')">
+                        <div class="event-icon">🕵️</div>
+                        <h3>Cyber Crime Investigation</h3>
+                        <p>Step into digital forensics and analyze cyber incidents. Uncover digital clues, identify attack techniques, and investigate real cybercrime scenarios with precision.</p>
+                        <a class="view-more">View Details →</a>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="event-card" onclick="showEventDetail('memory-matrix')">
+                        <div class="event-icon">🧠</div>
+                        <h3>Memory Matrix</h3>
+                        <p>Test your memory, concentration, and logical thinking. Observe patterns, symbols, and sequences under pressure in this fast-paced technical challenge.</p>
+                        <a class="view-more">View Details →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NON-TECHNICAL EVENTS -->
+            <div class="event-category">
+                <div class="category-title">
+                    <span class="category-badge">🎨 Non-Technical Events</span>
+                </div>
+                
+                <div class="events-grid">
+                    <!-- Event 3 -->
+                    <div class="event-card" onclick="showEventDetail('reverse-pictionary')">
+                        <div class="event-icon">🎨</div>
+                        <h3>Reverse Pictionary</h3>
+                        <p>Creative thinking meets quick drawing. Turn words into creative visuals while your team decodes the message. No technical knowledge required!</p>
+                        <a class="view-more">View Details →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Committee Section -->
+        <section class="committee" id="committee">
+            <h2 class="section-title">Organizing Committee</h2>
+            
+            <div class="committee-grid">
+                <div class="member-card">
+                    <div class="member-avatar">👑</div>
+                    <div class="member-name">S. Gomathi</div>
+                    <div class="member-role">President</div>
+                    <div class="member-contact">✓ Verified</div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-avatar">🛡️</div>
+                    <div class="member-name">Senthamilselvan S</div>
+                    <div class="member-role">Vice President</div>
+                    <div class="member-contact">
+                        <a href="tel:+919363098532" style="color: var(--accent); text-decoration: none;">📞 93630 98532</a>
+                    </div>
+                </div>
+
+                <div class="member-card feature-faculty" style="padding: 2.5rem 1.5rem;">
+                    <div class="faculty-badge-wrap">
+                        <div class="faculty-icon">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                    </div>
+                    <div class="member-name" style="font-size: 1.5rem; margin-top: 1rem;">Ms. Sangeetha Priya</div>
+                    <div class="member-role" style="font-size: 0.95rem; letter-spacing: 0.08em; margin: 0.8rem 0 1rem; text-transform: uppercase;">Overall Coordinator</div>
+                    <div class="member-role" style="font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-top: -0.4rem; margin-bottom: 0.8rem;">Faculty</div>
+                    <div class="member-contact" style="color: var(--text);">
+                        <span style="color: var(--accent); font-weight: 700;">✓</span> Verified
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-avatar">📋</div>
+                    <div class="member-name">I Dhanasekar S</div>
+                    <div class="member-role">Co-Coordinator</div>
+                    <div class="member-contact">
+                        <a href="tel:+917200839399" style="color: var(--accent); text-decoration: none;">📞 72008 39399</a>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-avatar">🎯</div>
+                    <div class="member-name">Suriyakesavan</div>
+                    <div class="member-role">Co-Coordinator</div>
+                    <div class="member-contact">
+                        <a href="tel:+916384576389" style="color: var(--accent); text-decoration: none;">📞 +91 63845 76389</a>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="member-avatar">🔐</div>
+                    <div class="member-name">Department of Cyber Security</div>
+                    <div class="member-role">Organizing Dept</div>
+                    <div class="member-contact">CSE · BE Programme</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Section -->
+        <section class="info" id="info">
+            <h2 class="section-title">Event Details</h2>
+            
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3>📅 Event Date</h3>
+                    <p>26 September 2026</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Saturday</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>📍 Location</h3>
+                    <p>Gojan School of Business & Technology</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Multi-Venue Event</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>🎯 Eligibility</h3>
+                    <p>All Engineering & Technology Students</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">National Level</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>📞 Contact</h3>
+                    <p>93630 98532</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Available 24/7</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>🎓 Department</h3>
+                    <p>Cyber Security (CSE)</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">BE Programme</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>⚡ Events</h3>
+                    <p>3 Exciting Challenges</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">2 Technical + 1 Non-Tech</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- EVENT DETAIL PAGES -->
+    <div id="cyber-crime-page" class="page">
+        <div class="event-detail">
+            <a class="back-btn" onclick="goHome()">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+
+            <h1>🕵️ Cyber Crime Investigation</h1>
+            
+            <div class="event-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Event Type</span>
+                    <span class="meta-value">Technical</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Venue</span>
+                    <span class="meta-value">Lab Centre - 04</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Date</span>
+                    <span class="meta-value">26 Sept 2026</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Level</span>
+                    <span class="meta-value">National</span>
+                </div>
+            </div>
+
+            <div class="event-content">
+                <h2>Event Overview</h2>
+                <p>Cyber Crime Investigation is a cutting-edge technical event designed to challenge participants to analyze cyber incidents, uncover digital clues, identify attack techniques, and investigate cybercrime scenarios with the precision of a seasoned digital detective.</p>
+
+                <p>This event tests your ability to think like a cybersecurity professional, analyzing evidence, tracing attack patterns, and solving complex digital mysteries. Every clue matters. Every log tells a story.</p>
+
+                <h2>What You'll Do</h2>
+                <p>Participants will work with investigation-based challenges involving:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Digital Forensics & Evidence Analysis - Extract and analyze data from digital systems</li>
+                        <li>Network Forensics & Cyber Attack Investigation - Trace attack paths and identify threat actors</li>
+                        <li>Clue-Based Cybercrime Challenges - Solve complex cybercrime scenarios using logical reasoning</li>
+                        <li>Log Analysis & System Artifacts - Investigate system logs for suspicious activities</li>
+                        <li>Malware Analysis Basics - Identify and classify malicious code signatures</li>
+                        <li>Real-World Cybersecurity Scenarios - Apply practical cybersecurity skills</li>
+                    </ul>
+                </div>
+
+                <h2>Skills You'll Need</h2>
+                <p>This event tests and develops:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Analytical & Logical Thinking - Break down complex problems</li>
+                        <li>Technical Knowledge - Understanding of cybersecurity concepts</li>
+                        <li>Evidence Collection & Analysis - Proper forensic procedures</li>
+                        <li>Problem-Solving Ability - Quick thinking under pressure</li>
+                        <li>Attention to Detail - Spotting critical clues</li>
+                        <li>Report Writing - Documenting your findings professionally</li>
+                    </ul>
+                </div>
+
+                <h2>Who Can Participate?</h2>
+                <p>Open to engineering and technology students with an interest in:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Cybersecurity & Ethical Hacking</li>
+                        <li>Digital Forensics & Incident Response</li>
+                        <li>Network Security & Administration</li>
+                        <li>Information Security</li>
+                    </ul>
+                </div>
+
+                <h2>Event Rules & Guidelines</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Teams of 2-3 members per group</li>
+                        <li>Time limit: 2-3 hours per round</li>
+                        <li>No external internet access during the event</li>
+                        <li>Provided tools and utilities only</li>
+                        <li>Judging based on accuracy, speed, and documentation quality</li>
+                    </ul>
+                </div>
+
+                <h2>How to Prepare?</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Learn basic Linux commands and file systems</li>
+                        <li>Understand network concepts (IP, TCP/UDP, DNS)</li>
+                        <li>Practice with forensic tools like FTK, EnCase, or Volatility</li>
+                        <li>Study real cyber incident case studies</li>
+                        <li>Develop pattern recognition skills</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 3rem; padding: 2rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid var(--accent); border-radius: 8px;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">Ready to Hunt the Threats?</h3>
+                    <p>Challenge yourself with real-world cybercrime scenarios. Prove your investigative skills and become a cyber detective.</p>
+                    <button class="btn-primary" onclick="registerNow()" style="margin-top: 1rem;">Register Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="memory-matrix-page" class="page">
+        <div class="event-detail">
+            <a class="back-btn" onclick="goHome()">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+
+            <h1>🧠 Memory Matrix</h1>
+            
+            <div class="event-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Event Type</span>
+                    <span class="meta-value">Technical</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Venue</span>
+                    <span class="meta-value">Lab Centre - 04</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Date</span>
+                    <span class="meta-value">26 Sept 2026</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Level</span>
+                    <span class="meta-value">National</span>
+                </div>
+            </div>
+
+            <div class="event-content">
+                <h2>Event Overview</h2>
+                <p>Memory Matrix is a fast-paced technical event designed to challenge participants to observe, remember, and accurately recall patterns, symbols, numbers, sequences, and technical information under intense time pressure.</p>
+
+                <p>This event tests the peak performance of your cognitive abilities - how quickly you can process information, how accurately you can retain details, and how effectively you can recall them when it matters most.</p>
+
+                <h2>What You'll Face</h2>
+                <p>Participants will encounter:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Pattern & Sequence Recognition - Visual and logical patterns</li>
+                        <li>Memory & Concentration Challenges - Increasing difficulty levels</li>
+                        <li>Speed & Accuracy Tests - Race against the clock</li>
+                        <li>Number and Symbol Recall - Remember complex sequences</li>
+                        <li>Logical Thinking & Problem Solving - Connect the dots</li>
+                        <li>Progressive Difficulty - Each round becomes harder</li>
+                    </ul>
+                </div>
+
+                <h2>Round Structure</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Round 1: Basic Pattern Recognition (Easy)</li>
+                        <li>Round 2: Complex Sequences & Symbols (Medium)</li>
+                        <li>Round 3: Rapid-Fire Recall Challenge (Hard)</li>
+                        <li>Round 4: Final Boss Round (Extreme)</li>
+                    </ul>
+                </div>
+
+                <h2>Skills Tested</h2>
+                <p>This event evaluates:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Short-term Memory Capacity - How much you can hold</li>
+                        <li>Observation Skills - Spotting the details others miss</li>
+                        <li>Concentration Under Pressure - Staying focused</li>
+                        <li>Quick Decision Making - Think fast, act faster</li>
+                        <li>Logical Reasoning - Making sense of patterns</li>
+                        <li>Mental Stamina - Sustaining peak performance</li>
+                    </ul>
+                </div>
+
+                <h2>Who Can Participate?</h2>
+                <p>Open to all engineering and technology students who are ready to:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Challenge their memory and observation skills</li>
+                        <li>Test their concentration and focus</li>
+                        <li>Push their cognitive performance limits</li>
+                        <li>Compete at a national level</li>
+                    </ul>
+                </div>
+
+                <h2>Tips to Prepare</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Play brain games and memory apps regularly</li>
+                        <li>Practice pattern recognition exercises</li>
+                        <li>Improve concentration through meditation</li>
+                        <li>Take timed mock tests to build speed</li>
+                        <li>Learn mnemonic techniques for quick recall</li>
+                        <li>Practice visual memory exercises</li>
+                    </ul>
+                </div>
+
+                <h2>Event Rules</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Individual competition</li>
+                        <li>Strict time limits per round</li>
+                        <li>No external aids or communication devices</li>
+                        <li>Electronic device usage strictly prohibited</li>
+                        <li>Judging based on accuracy and speed</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 3rem; padding: 2rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid var(--accent); border-radius: 8px;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">Test Your Mental Prowess</h3>
+                    <p>Can you remember everything you see? Can you spot patterns others miss? Find out at Memory Matrix!</p>
+                    <button class="btn-primary" onclick="registerNow()" style="margin-top: 1rem;">Register Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reverse-pictionary-page" class="page">
+        <div class="event-detail">
+            <a class="back-btn" onclick="goHome()">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+
+            <h1>🎨 Reverse Pictionary</h1>
+            
+            <div class="event-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Event Type</span>
+                    <span class="meta-value">Non-Technical</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Venue</span>
+                    <span class="meta-value">S2</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Date</span>
+                    <span class="meta-value">26 Sept 2026</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Level</span>
+                    <span class="meta-value">National</span>
+                </div>
+            </div>
+
+            <div class="event-content">
+                <h2>Event Overview</h2>
+                <p>Reverse Pictionary is a fun and exciting non-technical event where participants turn words, concepts, or clues into creative drawings while their teammates try to guess them within a limited time. It's a celebration of creativity, communication, and teamwork!</p>
+
+                <p>Think you can draw? Think your team can guess? This event proves that sometimes the best ideas come from the wildest sketches!</p>
+
+                <h2>How It Works</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Your team gets a word or concept</li>
+                        <li>You have 60 seconds to draw it (without writing letters or numbers)</li>
+                        <li>Your teammates try to guess what you're drawing</li>
+                        <li>Points awarded for correct guesses and speed</li>
+                        <li>Move through multiple rounds with increasing difficulty</li>
+                    </ul>
+                </div>
+
+                <h2>Event Highlights</h2>
+                <p>What makes this event amazing:</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Creative Drawing Challenges - Express yourself through art</li>
+                        <li>Quick Thinking & Guessing - Be ready for anything</li>
+                        <li>Teamwork & Communication - Communicate without words</li>
+                        <li>Time-Based Challenges - Race against the clock</li>
+                        <li>Fun & Engaging Rounds - Laugh, sketch, and win!</li>
+                        <li>Theme-Based Categories - Cybersecurity, movies, concepts, and more</li>
+                    </ul>
+                </div>
+
+                <h2>Round Structure</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Round 1: Easy Mode (Common objects and concepts)</li>
+                        <li>Round 2: Medium Mode (Abstract ideas and technical terms)</li>
+                        <li>Round 3: Hard Mode (Complex cybersecurity concepts)</li>
+                        <li>Final Round: Speed Round (Multiple items in 30 seconds)</li>
+                    </ul>
+                </div>
+
+                <h2>Scoring System</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Correct guess before time ends: +10 points</li>
+                        <li>Guessed in first 30 seconds: +5 bonus points</li>
+                        <li>Multiple items in speed round: Points per correct answer</li>
+                        <li>Highest team score wins the event</li>
+                    </ul>
+                </div>
+
+                <h2>Who Can Participate?</h2>
+                <p>Open to all engineering and technology students. No technical knowledge required!</p>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Team size: 3-4 members per team</li>
+                        <li>All members participate in guessing</li>
+                        <li>One drawer per round (rotates)</li>
+                        <li>Mix of artistic and non-artistic people welcome</li>
+                    </ul>
+                </div>
+
+                <h2>Drawing Tips</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Focus on shapes and symbols, not perfect art</li>
+                        <li>Use colors strategically to hint at the concept</li>
+                        <li>Draw large and clear - avoid tiny details</li>
+                        <li>Think of associations - what makes people think of your concept?</li>
+                        <li>Don't overthink - simplicity often works better</li>
+                        <li>Use arrows and lines to show action</li>
+                    </ul>
+                </div>
+
+                <h2>Guessing Tips</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>Watch the drawing unfold - context matters</li>
+                        <li>Call out related words to narrow it down</li>
+                        <li>Be loud and confident in your guesses</li>
+                        <li>Help teammates with ideas</li>
+                        <li>Think laterally - the obvious answer isn't always right</li>
+                    </ul>
+                </div>
+
+                <h2>Event Rules</h2>
+                <div class="highlights-list">
+                    <ul>
+                        <li>No writing letters, numbers, or words on paper</li>
+                        <li>No speaking hints (except in guessing phase)</li>
+                        <li>Drawer cannot speak during drawing time</li>
+                        <li>All drawings must be original (no tracing)</li>
+                        <li>Strict time limits enforced</li>
+                        <li>Judges' decisions are final</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 3rem; padding: 2rem; background: rgba(0, 212, 255, 0.1); border-left: 4px solid var(--accent); border-radius: 8px;">
+                    <h3 style="color: var(--accent); margin-bottom: 1rem;">Ready to Sketch Your Way to Victory?</h3>
+                    <p>Grab your team, sharpen your creative skills, and come draw, guess, and laugh at Reverse Pictionary!</p>
+                    <button class="btn-primary" onclick="registerNow()" style="margin-top: 1rem;">Register Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameModal" class="game-modal" aria-label="Mini game modal">
+        <div class="game-panel">
+            <div class="game-header">
+                <div class="game-title">CYNEX Game</div>
+                <button class="close-game" onclick="closeGameModal()">Close</button>
+            </div>
+
+            <div class="game-info">
+                <div class="game-scoreboard">
+                    <div class="score-pill">Score: <span id="gameScore">0</span></div>
+                    <div class="score-pill">Time: <span id="gameTime">20</span>s</div>
+                </div>
+            </div>
+
+            <div class="game-stage" id="gameStage">
+                <div class="snake-grid" id="snakeGrid"></div>
+            </div>
+
+            <div class="game-pad" aria-label="Touch controls">
+                <button type="button" data-direction="up" aria-label="Move up">&#9650;</button>
+                <button type="button" data-direction="left" aria-label="Move left">&#9664;</button>
+                <button type="button" data-direction="down" aria-label="Move down">&#9660;</button>
+                <button type="button" data-direction="right" aria-label="Move right">&#9654;</button>
+            </div>
+
+            <div class="quiz-stage" id="quizStage">
+                <div class="quiz-question" id="quizQuestion"></div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback" aria-live="polite"></div>
+                <button class="primary-game-btn" id="nextQuizBtn" type="button">Next Question</button>
+            </div>
+
+            <div class="memory-stage" id="memoryStage" aria-label="Cyber memory matching game"></div>
+
+            <div class="game-controls">
+                <button class="primary-game-btn" id="startGameBtn">Start Game</button>
+                <button class="secondary-game-btn" id="quizModeBtn" type="button">Cyber Quiz</button>
+                <button class="secondary-game-btn" id="memoryModeBtn" type="button">Memory Match</button>
+                <button class="secondary-game-btn" onclick="closeGameModal()">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-highlight">🐺 CYNEX 2K26</p>
+        <p>A National Level Cybersecurity Symposium</p>
+        <p>Department of Cyber Security (CSE) · BE Programme</p>
+        <p>Gojan School of Business and Technology</p>
+        <p style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 2rem;">
+            <a href="https://chat.whatsapp.com/FN4HYHGGIpSBc7hiMiHRM3?s=sh&p=a&mlu=4&ilr=4" target="_blank" style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fab fa-whatsapp"></i> Join WhatsApp Group
+            </a>
+            <a href="tel:+919363098532" style="color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-phone"></i> 93630 98532
+            </a>
+        </p>
+        <p style="margin-top: 1.5rem; font-size: 0.85rem;">© 2026 CYNEX. Hunt the threat. Guard the code. 🔐</p>
+    </footer>
+
+    <script>
+        const introStorm = document.getElementById('introStorm');
+
+        setTimeout(() => {
+            introStorm.classList.remove('active');
+        }, 3000);
+
+        const gameModal = document.getElementById('gameModal');
+        const gameStage = document.getElementById('gameStage');
+        const snakeGrid = document.getElementById('snakeGrid');
+        const gameScoreEl = document.getElementById('gameScore');
+        const gameTimeEl = document.getElementById('gameTime');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const directionButtons = document.querySelectorAll('[data-direction]');
+        const gamePad = document.querySelector('.game-pad');
+        const quizStage = document.getElementById('quizStage');
+        const quizQuestion = document.getElementById('quizQuestion');
+        const quizOptions = document.getElementById('quizOptions');
+        const quizFeedback = document.getElementById('quizFeedback');
+        const nextQuizBtn = document.getElementById('nextQuizBtn');
+        const quizModeBtn = document.getElementById('quizModeBtn');
+        const memoryStage = document.getElementById('memoryStage');
+        const memoryModeBtn = document.getElementById('memoryModeBtn');
+
+        const quizQuestions = [
+            {
+                question: 'What is the safest response to a suspicious email link?',
+                options: ['Click it to check where it goes', 'Forward it to friends', 'Report it and avoid opening it', 'Reply asking for details'],
+                answer: 2
+            },
+            {
+                question: 'Which password is strongest?',
+                options: ['password123', 'CYNEX2026', 'BlueDog!', 'v7$Qm!2z#L9p'],
+                answer: 3
+            },
+            {
+                question: 'What does MFA add to an account?',
+                options: ['A second verification step', 'More storage', 'A faster internet connection', 'A public profile'],
+                answer: 0
+            }
+        ];
+        let quizIndex = 0;
+        let quizScore = 0;
+        let memoryFirstCard = null;
+        let memorySecondCard = null;
+        let memoryLocked = false;
+        let memoryMatches = 0;
+        const memorySymbols = ['🔐', '🛡️', '🦠', '💻'];
+
+        const gridSize = 16;
+        let score = 0;
+        let timeLeft = 20;
+        let snake = [{ x: 5, y: 7 }, { x: 4, y: 7 }, { x: 3, y: 7 }];
+        let direction = { x: 1, y: 0 };
+        let nextDirection = { x: 1, y: 0 };
+        let food = { x: 10, y: 7 };
+        let snakeInterval = null;
+        let timerInterval = null;
+        let keyboardReady = false;
+
+        function clearStatusMessage() {
+            const existingMessage = gameStage.querySelector('.game-status');
+            if (existingMessage) existingMessage.remove();
+        }
+
+        function showStatusMessage(text) {
+            clearStatusMessage();
+            const message = document.createElement('div');
+            message.className = 'game-status';
+            message.style.position = 'absolute';
+            message.style.inset = '0';
+            message.style.display = 'flex';
+            message.style.alignItems = 'center';
+            message.style.justifyContent = 'center';
+            message.style.fontSize = '2rem';
+            message.style.fontWeight = '800';
+            message.style.color = '#fff';
+            message.textContent = text;
+            gameStage.appendChild(message);
+        }
+
+        function bindKeyboardControls() {
+            if (keyboardReady) return;
+
+            const setDirection = (newDirection) => {
+                if (!newDirection) return;
+
+                const isOpposite = newDirection.x === -direction.x && newDirection.y === -direction.y;
+                if (!isOpposite) nextDirection = newDirection;
+            };
+
+            document.addEventListener('keydown', (event) => {
+                const keyMap = {
+                    ArrowUp: { x: 0, y: -1 },
+                    ArrowDown: { x: 0, y: 1 },
+                    ArrowLeft: { x: -1, y: 0 },
+                    ArrowRight: { x: 1, y: 0 }
+                };
+
+                setDirection(keyMap[event.key]);
+            });
+
+            directionButtons.forEach(button => {
+                button.addEventListener('pointerdown', (event) => {
+                    event.preventDefault();
+                    const directions = {
+                        up: { x: 0, y: -1 },
+                        down: { x: 0, y: 1 },
+                        left: { x: -1, y: 0 },
+                        right: { x: 1, y: 0 }
+                    };
+                    setDirection(directions[button.dataset.direction]);
+                });
+            });
+
+            keyboardReady = true;
+        }
+
+        function openGameModal() {
+            gameModal.classList.add('active');
+            resetGame();
+        }
+
+        function closeGameModal() {
+            gameModal.classList.remove('active');
+            clearInterval(snakeInterval);
+            clearInterval(timerInterval);
+            resetGame();
+        }
+
+        function buildGrid() {
+            snakeGrid.innerHTML = '';
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                snakeGrid.appendChild(cell);
+            }
+        }
+
+        function renderGrid() {
+            const cells = snakeGrid.children;
+            Array.from(cells).forEach(cell => cell.classList.remove('snake', 'food'));
+
+            snake.forEach(segment => {
+                const index = segment.y * gridSize + segment.x;
+                if (cells[index]) cells[index].classList.add('snake');
+            });
+
+            const foodIndex = food.y * gridSize + food.x;
+            if (cells[foodIndex]) cells[foodIndex].classList.add('food');
+        }
+
+        function randomFood() {
+            let newFood;
+            do {
+                newFood = {
+                    x: Math.floor(Math.random() * gridSize),
+                    y: Math.floor(Math.random() * gridSize)
+                };
+            } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+            food = newFood;
+        }
+
+        function resetGame() {
+            clearInterval(snakeInterval);
+            clearInterval(timerInterval);
+            score = 0;
+            timeLeft = 20;
+            snake = [{ x: 5, y: 7 }, { x: 4, y: 7 }, { x: 3, y: 7 }];
+            direction = { x: 1, y: 0 };
+            nextDirection = { x: 1, y: 0 };
+            randomFood();
+            gameScoreEl.textContent = '0';
+            gameTimeEl.textContent = '20';
+            clearStatusMessage();
+            buildGrid();
+            renderGrid();
+        }
+
+        function updateSnake() {
+            direction = nextDirection;
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+            if (
+                head.x < 0 || head.x >= gridSize ||
+                head.y < 0 || head.y >= gridSize ||
+                snake.some(segment => segment.x === head.x && segment.y === head.y)
+            ) {
+                clearInterval(snakeInterval);
+                clearInterval(timerInterval);
+                showStatusMessage(`Game Over! Score: ${score}`);
+                return;
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                gameScoreEl.textContent = score;
+                randomFood();
+            } else {
+                snake.pop();
+            }
+
+            renderGrid();
+        }
+
+        function startGame() {
+            resetGame();
+            bindKeyboardControls();
+
+            snakeInterval = setInterval(() => {
+                updateSnake();
+            }, 180);
+
+            timerInterval = setInterval(() => {
+                timeLeft -= 1;
+                gameTimeEl.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(snakeInterval);
+                    clearInterval(timerInterval);
+                    showStatusMessage(`Time Up! Final Score: ${score}`);
+                }
+            }, 1000);
+        }
+
+        startGameBtn.addEventListener('click', startGame);
+
+        function renderQuizQuestion() {
+            const currentQuestion = quizQuestions[quizIndex];
+            quizQuestion.textContent = `${quizIndex + 1}/${quizQuestions.length} - ${currentQuestion.question}`;
+            quizOptions.innerHTML = '';
+            quizFeedback.textContent = '';
+            nextQuizBtn.style.display = 'none';
+
+            currentQuestion.options.forEach((option, optionIndex) => {
+                const optionButton = document.createElement('button');
+                optionButton.className = 'quiz-option';
+                optionButton.type = 'button';
+                optionButton.textContent = option;
+                optionButton.addEventListener('click', () => answerQuiz(optionButton, optionIndex));
+                quizOptions.appendChild(optionButton);
+            });
+        }
+
+        function answerQuiz(selectedButton, selectedIndex) {
+            const currentQuestion = quizQuestions[quizIndex];
+            const optionButtons = quizOptions.querySelectorAll('.quiz-option');
+            optionButtons.forEach(button => { button.disabled = true; });
+
+            if (selectedIndex === currentQuestion.answer) {
+                selectedButton.classList.add('correct');
+                quizScore += 10;
+                quizFeedback.textContent = 'Correct! Cyber defense unlocked.';
+            } else {
+                selectedButton.classList.add('wrong');
+                optionButtons[currentQuestion.answer].classList.add('correct');
+                quizFeedback.textContent = 'Not quite. The highlighted answer is safest.';
+            }
+
+            gameScoreEl.textContent = quizScore;
+            nextQuizBtn.style.display = 'inline-block';
+        }
+
+        function showQuizMode() {
+            clearInterval(snakeInterval);
+            clearInterval(timerInterval);
+            gameStage.style.display = 'none';
+            gamePad.style.display = 'none';
+            startGameBtn.style.display = 'none';
+            memoryStage.classList.remove('active');
+            quizStage.classList.add('active');
+            quizModeBtn.textContent = 'Play Snake';
+            quizIndex = 0;
+            quizScore = 0;
+            gameScoreEl.textContent = '0';
+            gameTimeEl.textContent = '-';
+            renderQuizQuestion();
+        }
+
+        function showSnakeMode() {
+            quizStage.classList.remove('active');
+            memoryStage.classList.remove('active');
+            gameStage.style.display = '';
+            gamePad.style.display = '';
+            startGameBtn.style.display = 'inline-block';
+            quizModeBtn.textContent = 'Cyber Quiz';
+            resetGame();
+        }
+
+        function showMemoryMode() {
+            clearInterval(snakeInterval);
+            clearInterval(timerInterval);
+            gameStage.style.display = 'none';
+            gamePad.style.display = 'none';
+            startGameBtn.style.display = 'none';
+            quizStage.classList.remove('active');
+            memoryStage.classList.add('active');
+            gameScoreEl.textContent = '0';
+            gameTimeEl.textContent = '-';
+            memoryFirstCard = null;
+            memorySecondCard = null;
+            memoryLocked = false;
+            memoryMatches = 0;
+            renderMemoryCards();
+        }
+
+        function renderMemoryCards() {
+            const cards = [...memorySymbols, ...memorySymbols]
+                .sort(() => Math.random() - 0.5);
+            memoryStage.innerHTML = '';
+
+            cards.forEach(symbol => {
+                const card = document.createElement('button');
+                card.className = 'memory-card';
+                card.type = 'button';
+                card.dataset.symbol = symbol;
+                card.textContent = symbol;
+                card.addEventListener('click', () => revealMemoryCard(card));
+                memoryStage.appendChild(card);
+            });
+        }
+
+        function revealMemoryCard(card) {
+            if (memoryLocked || card.classList.contains('revealed') || card.classList.contains('matched')) return;
+
+            card.classList.add('revealed');
+            if (!memoryFirstCard) {
+                memoryFirstCard = card;
+                return;
+            }
+
+            memorySecondCard = card;
+            if (memoryFirstCard.dataset.symbol === memorySecondCard.dataset.symbol) {
+                memoryFirstCard.classList.add('matched');
+                memorySecondCard.classList.add('matched');
+                memoryMatches += 1;
+                gameScoreEl.textContent = memoryMatches * 10;
+                memoryFirstCard = null;
+                memorySecondCard = null;
+                if (memoryMatches === memorySymbols.length) gameTimeEl.textContent = 'Won';
+                return;
+            }
+
+            memoryLocked = true;
+            setTimeout(() => {
+                memoryFirstCard.classList.remove('revealed');
+                memorySecondCard.classList.remove('revealed');
+                memoryFirstCard = null;
+                memorySecondCard = null;
+                memoryLocked = false;
+            }, 650);
+        }
+
+        quizModeBtn.addEventListener('click', () => {
+            if (quizStage.classList.contains('active')) {
+                showSnakeMode();
+            } else {
+                showQuizMode();
+            }
+        });
+
+        memoryModeBtn.addEventListener('click', showMemoryMode);
+
+        nextQuizBtn.addEventListener('click', () => {
+            quizIndex += 1;
+            if (quizIndex >= quizQuestions.length) {
+                quizQuestion.textContent = `Quiz complete! Final score: ${quizScore}/${quizQuestions.length * 10}`;
+                quizOptions.innerHTML = '';
+                quizFeedback.textContent = 'Press Cyber Quiz to play again.';
+                nextQuizBtn.style.display = 'none';
+                return;
+            }
+            renderQuizQuestion();
+        });
+
+        // Page Navigation
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            const targetId = pageId === 'home' ? 'home-page' : pageId === 'events' ? 'home-page' : pageId === 'committee' ? 'home-page' : pageId === 'info' ? 'home-page' : pageId + '-page';
+            
+            const targetPage = document.getElementById(targetId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            
+            if (pageId === 'events') {
+                setTimeout(() => {
+                    document.getElementById('events').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else if (pageId === 'committee') {
+                setTimeout(() => {
+                    document.getElementById('committee').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } else if (pageId === 'info') {
+                setTimeout(() => {
+                    document.getElementById('info').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        }
+
+        function showEventDetail(eventId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            const pageMap = {
+                'cyber-crime': 'cyber-crime-page',
+                'memory-matrix': 'memory-matrix-page',
+                'reverse-pictionary': 'reverse-pictionary-page'
+            };
+            
+            const targetPage = document.getElementById(pageMap[eventId]);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function goHome() {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById('home-page').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function registerNow() {
+            window.open('https://docs.google.com/forms/d/e/1FAIpQLScpzggyp58JeREOKfQ6YRmYC_M8W33ORPsTjLHAab79TgoygA/viewform?usp=header', '_blank');
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            const eventDate = new Date('2026-09-26T00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+            if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+            if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+            if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
