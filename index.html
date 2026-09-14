@@ -32,17 +32,7 @@
         }
 
         .site-video-background {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            opacity: 0.3;
-            filter: saturate(0.95) contrast(1.12) brightness(0.86);
-            mix-blend-mode: screen;
-            pointer-events: none;
+            display: none;
         }
 
         .page,
@@ -87,6 +77,75 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, rgba(2, 8, 16, 0.25), rgba(2, 8, 16, 0.7));
+        }
+
+        .intro-cynex-title {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(0.05rem, 1.2vw, 0.8rem);
+            width: 100%;
+            padding: 0 1rem;
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            pointer-events: none;
+        }
+
+        .intro-cynex-letter {
+            position: relative;
+            display: inline-block;
+            color: #f5fcff;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(3.4rem, 13vw, 11rem);
+            font-style: italic;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.12em;
+            opacity: 0;
+            transform: translateZ(-1400px) scale(0.04) rotateX(70deg) rotateY(-22deg);
+            transform-origin: center;
+            background: linear-gradient(145deg, #ffffff 4%, #b7f5ff 25%, #19c6ee 52%, #126fba 76%, #ff885b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 8px 10px 0 rgba(3, 24, 48, 0.8);
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 22px rgba(0, 212, 255, 0.95));
+            animation: cynexLetterZoom 1.45s cubic-bezier(0.12, 0.86, 0.2, 1) forwards;
+        }
+
+        .intro-cynex-letter:nth-child(1) { animation-delay: 0.1s; }
+        .intro-cynex-letter:nth-child(2) { animation-delay: 0.42s; }
+        .intro-cynex-letter:nth-child(3) { animation-delay: 0.74s; }
+        .intro-cynex-letter:nth-child(4) { animation-delay: 1.06s; }
+        .intro-cynex-letter:nth-child(5) { animation-delay: 1.38s; }
+
+        @keyframes cynexLetterZoom {
+            0% {
+                opacity: 0;
+                transform: translateZ(-2200px) scale(0.015) rotateX(78deg) rotateY(-28deg);
+            }
+            58% {
+                opacity: 1;
+                transform: translateZ(420px) scale(1.55) rotateX(-12deg) rotateY(7deg);
+            }
+            78% {
+                opacity: 1;
+                transform: translateZ(-80px) scale(0.92) rotateX(3deg) rotateY(-2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateZ(0) scale(1) rotateX(0) rotateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .intro-cynex-letter {
+                opacity: 1;
+                transform: none;
+                animation: none;
+            }
         }
 
         .intro-video-hint {
@@ -1429,7 +1488,7 @@
     </style>
 </head>
 <body>
-    <video class="site-video-background" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+    <video class="site-video-background" muted loop playsinline preload="none" aria-hidden="true">
         <source src="video/WhatsApp Video 2026-09-13 at 6.42.13 PM.mp4" type="video/mp4">
     </video>
     <div class="intro-video-screen" id="introVideoScreen" role="button" tabindex="0" aria-label="Play intro video and enter website">
@@ -1437,6 +1496,13 @@
             <source src="video/WhatsApp Video 2026-09-13 at 6.42.13 PM.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
+        <div class="intro-cynex-title" aria-hidden="true">
+            <span class="intro-cynex-letter">C</span>
+            <span class="intro-cynex-letter">Y</span>
+            <span class="intro-cynex-letter">N</span>
+            <span class="intro-cynex-letter">E</span>
+            <span class="intro-cynex-letter">X</span>
+        </div>
     </div>
     <div class="intro-storm" id="introStorm" aria-hidden="true">
         <svg class="storm-lightning" viewBox="0 0 230 390" role="presentation">
@@ -2088,19 +2154,26 @@
         const introVideoScreen = document.getElementById('introVideoScreen');
         const introVideo = document.getElementById('introVideo');
         const introStorm = document.getElementById('introStorm');
-        const backgroundVideos = document.querySelectorAll('.site-video-background, .hero-video');
+        const backgroundVideos = document.querySelectorAll('.hero-video');
         let introFinished = false;
         let introSoundEnabled = false;
         let introFallbackTimer;
+        let introStallTimer;
 
         introVideo.muted = true;
         introVideo.defaultMuted = true;
         introVideo.volume = 0;
 
-        function playVideo(video) {
-            video.muted = true;
-            video.defaultMuted = true;
-            video.volume = 0;
+        function playVideo(video, preserveSound = false) {
+            if (preserveSound) {
+                video.muted = false;
+                video.defaultMuted = false;
+                video.volume = 1;
+            } else {
+                video.muted = true;
+                video.defaultMuted = true;
+                video.volume = 0;
+            }
             const playAttempt = video.play();
             if (playAttempt && typeof playAttempt.catch === 'function') {
                 playAttempt.catch(() => {});
@@ -2111,20 +2184,21 @@
             backgroundVideos.forEach(playVideo);
         }
 
-        backgroundVideos.forEach(video => video.pause());
+        document.querySelectorAll('.site-video-background, .hero-video').forEach(video => video.pause());
         playVideo(introVideo);
-        introFallbackTimer = setTimeout(() => closeIntroVideo(false), 30000);
+        introFallbackTimer = setTimeout(() => closeIntroVideo(true), 30000);
 
         introVideo.addEventListener('loadedmetadata', () => {
             if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return;
             clearTimeout(introFallbackTimer);
-            introFallbackTimer = setTimeout(() => closeIntroVideo(false), (introVideo.duration + 5) * 1000);
+            introFallbackTimer = setTimeout(() => closeIntroVideo(true), (introVideo.duration + 5) * 1000);
         });
 
         function closeIntroVideo(showStorm = false) {
             if (introFinished) return;
             introFinished = true;
             clearTimeout(introFallbackTimer);
+            clearTimeout(introStallTimer);
             introVideoScreen.classList.add('dismissed');
             introVideo.pause();
             retryBackgroundVideos();
@@ -2133,7 +2207,7 @@
 
                 setTimeout(() => {
                     introStorm.classList.remove('active');
-                }, 1100);
+                }, 2200);
             }, 150);
         }
 
@@ -2142,11 +2216,24 @@
         }
 
         introVideo.addEventListener('ended', startStormAfterVideo);
-        introVideo.addEventListener('error', () => closeIntroVideo(false));
+        introVideo.addEventListener('error', () => closeIntroVideo(true));
         introVideo.addEventListener('stalled', () => {
-            setTimeout(() => {
-                if (!introFinished && introVideo.readyState < 3) closeIntroVideo(false);
-            }, 1500);
+            clearTimeout(introStallTimer);
+            introStallTimer = setTimeout(() => {
+                if (!introFinished && introVideo.readyState < 3) closeIntroVideo(true);
+            }, 3500);
+        });
+        introVideo.addEventListener('waiting', () => {
+            clearTimeout(introStallTimer);
+            introStallTimer = setTimeout(() => {
+                if (!introFinished && introVideo.readyState < 3) closeIntroVideo(true);
+            }, 3500);
+        });
+        introVideo.addEventListener('canplay', () => {
+            clearTimeout(introStallTimer);
+        });
+        introVideo.addEventListener('timeupdate', () => {
+            clearTimeout(introStallTimer);
         });
 
         introVideoScreen.addEventListener('click', () => {
@@ -2176,12 +2263,12 @@
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 if (introFinished) retryBackgroundVideos();
-                else playVideo(introVideo);
+                else playVideo(introVideo, introSoundEnabled);
             }
         });
         window.addEventListener('pageshow', () => {
             if (introFinished) retryBackgroundVideos();
-            else playVideo(introVideo);
+            else playVideo(introVideo, introSoundEnabled);
         });
 
         const gameModal = document.getElementById('gameModal');
