@@ -2113,7 +2113,13 @@
 
         backgroundVideos.forEach(video => video.pause());
         playVideo(introVideo);
-        introFallbackTimer = setTimeout(() => closeIntroVideo(false), 10000);
+        introFallbackTimer = setTimeout(() => closeIntroVideo(false), 30000);
+
+        introVideo.addEventListener('loadedmetadata', () => {
+            if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return;
+            clearTimeout(introFallbackTimer);
+            introFallbackTimer = setTimeout(() => closeIntroVideo(false), (introVideo.duration + 5) * 1000);
+        });
 
         function closeIntroVideo(showStorm = false) {
             if (introFinished) return;
