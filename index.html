@@ -614,7 +614,7 @@
             border-color: #65f6b2;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .nav-links {
                 display: none;
             }
@@ -1333,7 +1333,7 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .hero h1 {
                 font-size: clamp(2.7rem, 13vw, 4.5rem);
                 transform: scaleX(1.06);
@@ -2030,16 +2030,39 @@
         const introVideoScreen = document.getElementById('introVideoScreen');
         const introVideo = document.getElementById('introVideo');
         const introStorm = document.getElementById('introStorm');
+        const backgroundVideos = document.querySelectorAll('.site-video-background, .hero-video');
         let introFinished = false;
+        let introFallbackTimer;
 
         introVideo.muted = true;
-        introVideo.play().catch(() => {});
+        introVideo.defaultMuted = true;
+        introVideo.volume = 0;
+
+        function playVideo(video) {
+            video.muted = true;
+            video.defaultMuted = true;
+            video.volume = 0;
+            const playAttempt = video.play();
+            if (playAttempt && typeof playAttempt.catch === 'function') {
+                playAttempt.catch(() => {});
+            }
+        }
+
+        function retryBackgroundVideos() {
+            backgroundVideos.forEach(playVideo);
+        }
+
+        backgroundVideos.forEach(video => video.pause());
+        playVideo(introVideo);
+        introFallbackTimer = setTimeout(closeIntroVideo, 7000);
 
         function closeIntroVideo() {
             if (introFinished) return;
             introFinished = true;
+            clearTimeout(introFallbackTimer);
             introVideoScreen.classList.add('dismissed');
             introVideo.pause();
+            retryBackgroundVideos();
             setTimeout(() => {
                 introStorm.classList.add('active');
 
@@ -2055,14 +2078,13 @@
 
         introVideo.addEventListener('ended', startStormAfterVideo);
         introVideo.addEventListener('error', closeIntroVideo);
+        introVideo.addEventListener('stalled', () => {
+            setTimeout(() => {
+                if (!introFinished && introVideo.readyState < 3) closeIntroVideo();
+            }, 1500);
+        });
 
         introVideoScreen.addEventListener('click', () => {
-            if (introVideo.muted) {
-                introVideo.muted = false;
-                introVideo.play().catch(() => {});
-                return;
-            }
-
             closeIntroVideo();
         });
 
@@ -2071,6 +2093,17 @@
                 event.preventDefault();
                 closeIntroVideo();
             }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                if (introFinished) retryBackgroundVideos();
+                else playVideo(introVideo);
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            if (introFinished) retryBackgroundVideos();
+            else playVideo(introVideo);
         });
 
         const gameModal = document.getElementById('gameModal');
