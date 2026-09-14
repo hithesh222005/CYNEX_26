@@ -116,7 +116,7 @@
 
         .intro-storm.active {
             display: block;
-            animation: stormFade 3s ease-out forwards;
+            animation: stormFade 1.1s ease-out forwards;
         }
 
         .intro-storm::before {
@@ -211,7 +211,7 @@
         }
 
         @keyframes stormFade {
-            0%, 67% { opacity: 1; }
+            0%, 35% { opacity: 1; }
             100% { opacity: 0; }
         }
 
@@ -716,6 +716,64 @@
             overflow: hidden;
             padding: 4rem 2rem 2rem;
             background: linear-gradient(135deg, #0a0d12 0%, #1a1f2e 100%);
+        }
+
+        @media (max-width: 1024px) {
+            .hero {
+                margin-top: 92px;
+                min-height: calc(100svh - 92px);
+                padding: 5.5rem 1rem 2.5rem;
+            }
+
+            .hero-content {
+                width: min(100%, 720px);
+            }
+
+            .hero-badge {
+                max-width: 100%;
+                padding: 0.8rem 1.25rem;
+                font-size: clamp(0.82rem, 2vw, 1.1rem);
+            }
+
+            .hero h1 {
+                max-width: 100%;
+                font-size: clamp(2.4rem, 8vw, 4.5rem);
+                white-space: nowrap;
+            }
+
+            .hero-subtitle {
+                font-size: clamp(1rem, 2.8vw, 1.35rem);
+            }
+
+            .hero-tagline {
+                margin-bottom: 1.6rem;
+                font-size: clamp(0.9rem, 2.3vw, 1.1rem);
+            }
+
+            .countdown {
+                width: min(100%, 620px);
+                gap: clamp(0.55rem, 2vw, 1rem);
+                margin: 1.6rem auto;
+            }
+
+            .timer-box {
+                padding: clamp(0.7rem, 2vw, 1rem);
+            }
+
+            .timer-number {
+                font-size: clamp(1.8rem, 5vw, 2.5rem);
+            }
+
+            .hero-buttons {
+                margin-top: 1.7rem;
+                gap: 0.8rem;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                padding: 0.85rem 1.4rem;
+                font-size: 0.9rem;
+            }
         }
 
         .hero-video {
@@ -2032,6 +2090,7 @@
         const introStorm = document.getElementById('introStorm');
         const backgroundVideos = document.querySelectorAll('.site-video-background, .hero-video');
         let introFinished = false;
+        let introSoundEnabled = false;
         let introFallbackTimer;
 
         introVideo.muted = true;
@@ -2054,44 +2113,57 @@
 
         backgroundVideos.forEach(video => video.pause());
         playVideo(introVideo);
-        introFallbackTimer = setTimeout(closeIntroVideo, 7000);
+        introFallbackTimer = setTimeout(() => closeIntroVideo(false), 10000);
 
-        function closeIntroVideo() {
+        function closeIntroVideo(showStorm = false) {
             if (introFinished) return;
             introFinished = true;
             clearTimeout(introFallbackTimer);
             introVideoScreen.classList.add('dismissed');
             introVideo.pause();
             retryBackgroundVideos();
-            setTimeout(() => {
+            if (showStorm) setTimeout(() => {
                 introStorm.classList.add('active');
 
                 setTimeout(() => {
                     introStorm.classList.remove('active');
-                }, 3000);
-            }, 750);
+                }, 1100);
+            }, 150);
         }
 
         function startStormAfterVideo() {
-            closeIntroVideo();
+            closeIntroVideo(true);
         }
 
         introVideo.addEventListener('ended', startStormAfterVideo);
-        introVideo.addEventListener('error', closeIntroVideo);
+        introVideo.addEventListener('error', () => closeIntroVideo(false));
         introVideo.addEventListener('stalled', () => {
             setTimeout(() => {
-                if (!introFinished && introVideo.readyState < 3) closeIntroVideo();
+                if (!introFinished && introVideo.readyState < 3) closeIntroVideo(false);
             }, 1500);
         });
 
         introVideoScreen.addEventListener('click', () => {
-            closeIntroVideo();
+            if (!introSoundEnabled && !introFinished) {
+                introSoundEnabled = true;
+                introVideo.muted = false;
+                introVideo.defaultMuted = false;
+                introVideo.volume = 1;
+                introVideoScreen.setAttribute('aria-label', 'Sound enabled. Tap again to skip intro video');
+                const playAttempt = introVideo.play();
+                if (playAttempt && typeof playAttempt.catch === 'function') {
+                    playAttempt.catch(() => {});
+                }
+                return;
+            }
+
+            closeIntroVideo(false);
         });
 
         introVideoScreen.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                closeIntroVideo();
+                introVideoScreen.click();
             }
         });
 
